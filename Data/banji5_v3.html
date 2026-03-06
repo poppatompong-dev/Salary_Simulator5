@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บัญชีอัตราเงินเดือนพนักงานส่วนท้องถิ่น บัญชี ๕</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root{--ink:#1a1a2e;--paper:#f7f4ed;--paper2:#eeeade;--rule:#c8c0b0;--gold:#8b6914;--gold2:#c49a28;--goldhi:#f5d060;--green:#1a6b3a;--red:#8b1a1a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sarabun',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+.header{background:var(--ink);color:var(--paper);padding:24px 20px 18px;text-align:center;border-bottom:4px double var(--gold2);}
+.badge{display:inline-block;border:1px solid rgba(255,255,255,.2);border-radius:2px;padding:3px 12px;font-size:.65rem;letter-spacing:.15em;color:var(--goldhi);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;}
+.header h1{font-size:1.45rem;font-weight:800;color:#fff;}
+.header h2{font-size:.82rem;color:rgba(255,255,255,.55);margin-top:4px;}
+.hr{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);margin:10px auto 0;}
+.page{max-width:1200px;margin:0 auto;padding:20px 14px 60px;}
+.grid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
+@media(max-width:720px){.grid{grid-template-columns:1fr;}}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:4px;box-shadow:2px 2px 8px rgba(0,0,0,.06);}
+.ph{background:var(--ink);color:var(--paper);padding:8px 13px;font-size:.73rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:3px 3px 0 0;display:flex;align-items:center;gap:7px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--gold2);}
+.pb{padding:14px;}
+.field{margin-bottom:11px;}
+label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;}
+select,input{width:100%;background:#fff;border:1px solid var(--rule);border-radius:2px;padding:8px 10px;font-family:'Sarabun',sans-serif;font-size:.9rem;color:var(--ink);outline:none;transition:border-color .15s;}
+select:focus,input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(196,154,40,.12);}
+.btn{width:100%;margin-top:12px;background:var(--ink);color:var(--paper);border:none;border-radius:3px;padding:11px;font-family:'Sarabun',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.btn:hover{background:#2d2d4a;}
+.err{display:none;margin-top:8px;background:#fff0f0;border:1px solid #f5c0c0;border-left:3px solid var(--red);border-radius:2px;padding:7px 10px;font-size:.78rem;color:var(--red);line-height:1.5;white-space:pre-line;}
+.empty-msg{padding:36px 14px;text-align:center;color:#aaa;font-size:.85rem;line-height:2;font-style:italic;}
+.receipt{border:1px solid var(--rule);border-radius:3px;overflow:hidden;font-size:.83rem;}
+.rh{background:var(--ink);color:#fff;padding:8px 13px;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.rrow{display:flex;justify-content:space-between;align-items:baseline;padding:6px 12px;border-bottom:1px dashed var(--rule);gap:8px;}
+.rrow:last-child{border-bottom:none;}
+.rrow.acc{background:rgba(196,154,40,.07);}
+.rl{color:#666;font-size:.74rem;flex-shrink:0;}
+.rv{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.86rem;text-align:right;}
+.rv.gold{color:var(--gold);}
+.rv.green{color:var(--green);}
+.sum{margin-top:10px;background:var(--ink);border-radius:3px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;}
+.sl{font-size:.63rem;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
+.sv{font-family:'IBM Plex Mono',monospace;font-size:1.3rem;font-weight:600;}
+.sv.plus{color:var(--goldhi);}
+.sv.new{color:#7dffb3;}
+.copybtn{width:100%;margin-top:8px;background:transparent;border:1px solid var(--rule);border-radius:3px;padding:8px;font-family:'Sarabun',sans-serif;font-size:.8rem;color:var(--gold);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;}
+.copybtn:hover{background:var(--paper2);border-color:var(--gold2);}
+.copybtn.ok{color:var(--green);border-color:var(--green);}
+/* TABLE */
+.tsec{margin-top:20px;}
+.tbtn{background:transparent;border:1px solid var(--rule);border-radius:3px;padding:7px 14px;font-family:'Sarabun',sans-serif;font-size:.8rem;color:var(--gold);cursor:pointer;transition:all .15s;}
+.tbtn:hover{background:var(--paper2);border-color:var(--gold2);}
+.tnote{font-size:.7rem;color:#888;font-style:italic;margin-left:8px;}
+.tscroll{display:none;overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:#fff;margin-top:8px;}
+.tscroll.open{display:block;}
+.ttitle{background:var(--ink);color:#fff;text-align:center;padding:8px;font-size:.82rem;font-weight:700;}
+.tsubtitle{background:var(--ink);color:rgba(255,255,255,.5);text-align:center;padding:2px 8px 7px;font-size:.67rem;}
+table{width:100%;border-collapse:collapse;font-size:.68rem;white-space:nowrap;}
+thead tr.h1 th{background:#1a1a2e;color:#f5d060;padding:6px 4px;border:1px solid rgba(255,255,255,.1);font-size:.62rem;letter-spacing:.03em;text-align:center;vertical-align:middle;}
+thead tr.h2 th{background:#252545;color:rgba(255,255,255,.7);padding:5px 4px;border:1px solid rgba(255,255,255,.07);font-size:.6rem;text-align:center;vertical-align:middle;line-height:1.3;font-family:'Sarabun',sans-serif;}
+thead tr.h3 th{background:#303055;color:rgba(255,255,255,.6);padding:4px 4px 6px;border:1px solid rgba(255,255,255,.05);border-bottom:2px solid var(--gold2);font-size:.58rem;text-align:center;vertical-align:middle;font-family:'Sarabun',sans-serif;line-height:1.3;}
+td:first-child,th.sc{position:sticky;left:0;z-index:2;background:#fff;text-align:center;font-weight:600;border-right:2px solid var(--rule);min-width:38px;}
+thead tr th.sc{background:#1a1a2e !important;color:var(--goldhi) !important;border-right:2px solid var(--gold2) !important;}
+tbody td{padding:4px 6px;text-align:right;border:1px solid #e8e0d0;color:var(--ink);min-width:68px;font-family:'IBM Plex Mono',monospace;}
+tbody td.e{color:#ccc;text-align:center;font-family:'Sarabun',sans-serif;}
+tbody tr:nth-child(even) td:not(:first-child){background:#faf8f4;}
+th.sep,td.sep{border-left:2px solid #b0a080 !important;}
+tbody tr.hc td{background:#fef9c3 !important;font-weight:700;}
+tbody tr.hc td:first-child{background:#fef08a !important;}
+tbody tr.hn td{background:#dcfce7 !important;font-weight:700;}
+tbody tr.hn td:first-child{background:#bbf7d0 !important;}
+tbody td.hcc{background:#fbbf24 !important;color:#1a1a2e !important;font-weight:700;outline:2px solid #d97706;outline-offset:-1px;}
+tbody td.hcn{background:#22c55e !important;color:#fff !important;font-weight:700;outline:2px solid #16a34a;outline-offset:-1px;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;padding:7px 12px;background:var(--paper2);border-top:1px solid var(--rule);font-size:.66rem;color:#666;}
+.li{display:flex;align-items:center;gap:4px;}
+.lb{width:11px;height:11px;border-radius:2px;border:1px solid rgba(0,0,0,.1);}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="badge">สำนักงาน ก.จ. ก.ท. และ ก.อบต.</div>
+  <h1>บัญชีอัตราเงินเดือนพนักงานส่วนท้องถิ่น บัญชี ๕</h1>
+  <h2>(อบจ. เทศบาล อบต.) — ระบบขั้นเงินเดือน</h2>
+  <div class="hr"></div>
+</div>
+<div class="page">
+  <div class="grid">
+    <div class="panel">
+      <div class="ph"><div class="dot"></div>กรอกข้อมูลคำนวณ</div>
+      <div class="pb">
+        <div class="field">
+          <label>ประเภทตำแหน่ง</label>
+          <select id="pos">
+            <option value="">— เลือกประเภทตำแหน่ง —</option>
+            <optgroup label="ทั่วไป">
+              <option value="1">ทั่วไป ระดับปฏิบัติงาน</option>
+              <option value="2">ทั่วไป ระดับชำนาญงาน</option>
+              <option value="3">ทั่วไป ระดับอาวุโส</option>
+            </optgroup>
+            <optgroup label="วิชาการ">
+              <option value="4">วิชาการ ระดับปฏิบัติการ</option>
+              <option value="5">วิชาการ ระดับชำนาญการ</option>
+              <option value="6">วิชาการ ระดับชำนาญการพิเศษ</option>
+              <option value="7">วิชาการ ระดับเชี่ยวชาญ</option>
+            </optgroup>
+            <optgroup label="อำนวยการท้องถิ่น">
+              <option value="8">อำนวยการท้องถิ่น ระดับต้น</option>
+              <option value="9">อำนวยการท้องถิ่น ระดับกลาง</option>
+              <option value="10">อำนวยการท้องถิ่น ระดับสูง</option>
+            </optgroup>
+            <optgroup label="บริหารท้องถิ่น">
+              <option value="11">บริหารท้องถิ่น ระดับต้น</option>
+              <option value="12">บริหารท้องถิ่น ระดับกลาง</option>
+              <option value="13">บริหารท้องถิ่น ระดับสูง</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field">
+          <label>เงินเดือนปัจจุบัน (บาท)</label>
+          <input type="number" id="sal" placeholder="ระบุจากสลิปเงินเดือน" step="10">
+        </div>
+        <div class="field">
+          <label>ผลประเมินการปฏิบัติงาน</label>
+          <select id="ev">
+            <option value="2">ดีเด่น — เลื่อน 2 ขั้น</option>
+            <option value="1.5">ดีมาก — เลื่อน 1.5 ขั้น</option>
+            <option value="1" selected>ดี — เลื่อน 1 ขั้น</option>
+            <option value="0.5">พอใช้ — เลื่อน 0.5 ขั้น</option>
+            <option value="0">ต้องปรับปรุง — ไม่เลื่อน</option>
+          </select>
+        </div>
+        <div id="err" class="err"></div>
+        <button class="btn" onclick="calc()">🔍 คำนวณเงินเดือน</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="dot"></div>ผลการคำนวณ</div>
+      <div class="pb">
+        <div id="rempty" class="empty-msg">เลือกประเภทตำแหน่ง · กรอกเงินเดือน<br>แล้วกด "คำนวณเงินเดือน"</div>
+        <div id="rcont" style="display:none">
+          <div class="receipt">
+            <div class="rh">รายละเอียดการคำนวณ</div>
+            <div class="rrow"><span class="rl">ตำแหน่ง</span><span class="rv" id="rPos"></span></div>
+            <div class="rrow acc"><span class="rl">ขั้นปัจจุบัน</span><span class="rv gold" id="rCS"></span></div>
+            <div class="rrow acc"><span class="rl">เงินเดือนปัจจุบัน</span><span class="rv gold" id="rCSal"></span></div>
+            <div class="rrow"><span class="rl">ผลประเมิน</span><span class="rv" id="rEv"></span></div>
+            <div class="rrow"><span class="rl">เลื่อนขั้น</span><span class="rv" id="rInc"></span></div>
+            <div class="rrow acc"><span class="rl">ขั้นใหม่</span><span class="rv green" id="rNS"></span></div>
+            <div class="rrow acc"><span class="rl">เงินเดือนใหม่</span><span class="rv green" id="rNSal"></span></div>
+          </div>
+          <div class="sum">
+            <div><div class="sl">เงินที่ได้เพิ่ม</div><div class="sv plus" id="rDiff"></div></div>
+            <div><div class="sl">เงินเดือนใหม่</div><div class="sv new" id="rNew"></div></div>
+          </div>
+          <button class="copybtn" id="cpbtn" onclick="doCopy()">📋 คัดลอกผลลัพธ์</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tsec">
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+      <button class="tbtn" onclick="toggleT(this)">📂 แสดง / ซ่อน ตารางบัญชี ๕</button>
+      <span class="tnote">สีเหลือง = ขั้นปัจจุบัน · สีเขียว = ขั้นที่ได้รับ</span>
+    </div>
+    <div class="tscroll" id="tscr">
+      <div class="ttitle">บัญชีอัตราเงินเดือนพนักงานส่วนท้องถิ่น บัญชี ๕</div>
+      <div class="tsubtitle">(อัตราเงินเดือน หน่วย : บาท — เรียงจากขั้นสูงลงต่ำตามต้นฉบับ)</div>
+      <table id="mt">
+        <thead>
+          <tr class="h1">
+            <th class="sc" rowspan="3">ขั้น</th>
+            <th colspan="3">ประเภท ทั่วไป</th>
+            <th colspan="4" class="sep">ประเภท วิชาการ</th>
+            <th colspan="3" class="sep">อำนวยการท้องถิ่น</th>
+            <th colspan="3" class="sep">บริหารท้องถิ่น</th>
+          </tr>
+          <tr class="h2">
+            <th colspan="3">ระดับ</th>
+            <th colspan="4" class="sep">ระดับ</th>
+            <th colspan="3" class="sep">ระดับ</th>
+            <th colspan="3" class="sep">ระดับ</th>
+          </tr>
+          <tr class="h3">
+            <th>ปฏิบัติงาน</th><th>ชำนาญงาน</th><th>อาวุโส</th>
+            <th class="sep">ปฏิบัติการ</th><th>ชำนาญการ</th><th>ชก.พิเศษ</th><th>เชี่ยวชาญ</th>
+            <th class="sep">ต้น</th><th>กลาง</th><th>สูง</th>
+            <th class="sep">ต้น</th><th>กลาง</th><th>สูง</th>
+          </tr>
+        </thead>
+        <tbody id="tb"></tbody>
+      </table>
+      <div class="legend">
+        <div class="li"><div class="lb" style="background:#fef08a"></div>ขั้นปัจจุบัน</div>
+        <div class="li"><div class="lb" style="background:#fbbf24"></div>เงินเดือนปัจจุบัน</div>
+        <div class="li"><div class="lb" style="background:#bbf7d0"></div>ขั้นใหม่</div>
+        <div class="li"><div class="lb" style="background:#22c55e"></div>เงินเดือนใหม่</div>
+        <div class="li"><div class="lb" style="background:#eee;border:1px solid #ccc"></div>— ไม่มีขั้นนี้</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ============================================================
+// ตารางบัญชี 5 — สกัดจาก PDF ทบทวนและแก้ไขแล้ว (v3)
+// 13 คอลัมน์ข้อมูล:
+// c1-c3:  ทั่วไป (ปฏิบัติงาน, ชำนาญงาน, อาวุโส)
+// c4-c7:  วิชาการ (ปฏิบัติการ, ชำนาญการ, ชก.พิเศษ, เชี่ยวชาญ)
+// c8-c10: อำนวยการท้องถิ่น (ต้น, กลาง, สูง)
+// c11-c13:บริหารท้องถิ่น (ต้น, กลาง, สูง)
+// ============================================================
+const T=[
+//[step, c1,    c2,    c3,    c4,    c5,    c6,    c7,    c8,    c9,    c10,   c11,   c12,   c13]
+[32.5,null,null,null,null,49480,null,77380,50170,null,78020,51140,null,null],
+[32,null,null,54090,null,48740,null,76220,49480,null,77380,50170,null,null],
+[31.5,null,null,53310,null,47990,66490,75050,48740,67560,76220,49480,68640,null],
+[31,25020,40900,52540,null,47240,65490,73880,47990,66490,75050,48740,67560,null],
+[30.5,24640,40250,51770,null,46490,64490,72710,47240,65490,73880,47990,66490,null],
+[30,24270,39620,51000,null,45740,63480,71530,46490,64490,72710,47240,65490,80450],
+[29.5,23900,38990,50240,30020,44990,62470,70350,45740,63480,71530,46490,64490,79240],
+[29,23520,38380,49480,29570,44280,61460,69240,44990,62470,70350,45740,63480,78020],
+[28.5,23140,37790,48740,29130,43580,60450,68150,44280,61460,69240,44990,62470,76800],
+[28,22760,37210,47990,28690,42890,59500,67080,43580,60450,68150,44280,61460,75580],
+[27.5,22400,36640,47240,28250,42210,58560,66020,42890,59500,67080,43580,60450,74360],
+[27,22050,36090,46490,27800,41550,57640,64980,42210,58560,66020,42890,59500,73140],
+[26.5,21700,35540,45740,27350,40900,56730,63960,41550,57640,64980,42210,58560,71990],
+[26,21360,34990,44990,26920,40260,55840,63090,40900,56730,63960,41550,57640,70860],
+[25.5,21020,34430,44280,26500,39630,54960,62220,40260,55840,63090,40900,56730,69740],
+[25,20690,33870,43580,26080,39080,54090,61360,39630,54960,62220,40260,55840,68640],
+[24.5,20360,33310,42890,25670,38520,53230,60500,39080,54090,61360,39630,54960,67560],
+[24,20040,32790,42210,25270,37960,52370,59640,38520,53230,60500,39080,54090,66600],
+[23.5,19720,32270,41550,24870,37410,51520,58800,37960,52370,59640,38520,53230,65630],
+[23,19410,31760,40900,24480,36860,50670,57980,37410,51520,58800,37960,52370,64670],
+[22.5,19100,31260,40260,24090,36310,49830,57150,36860,50670,57980,37410,51520,63720],
+[22,18790,30770,39630,23710,35770,49010,56330,36310,49830,57150,36860,50670,62760],
+[21.5,18480,30290,39080,23340,35220,48200,55510,35770,49010,56330,36310,49830,61800],
+[21,18190,29810,38520,22980,34680,47380,54700,35220,48200,55510,35770,49010,60830],
+[20.5,17880,29340,37960,22600,34110,46560,53890,34680,47380,54700,35220,48200,59870],
+[20,17570,28880,37410,22230,33560,45750,53080,34110,46560,53890,34680,47380,58890],
+[19.5,17270,28430,36860,21880,33000,44930,52260,33560,45750,53080,34110,46560,57930],
+[19,16960,27960,36310,21500,32450,44130,51450,33000,44930,52260,33560,45750,56960],
+[18.5,16650,27490,35770,21140,31880,43300,50640,32450,44130,51450,33000,44930,56000],
+[18,16340,27030,35220,20770,31340,42620,49830,31880,43300,50640,32450,44130,55010],
+[17.5,16030,26580,34680,20440,30790,41930,49010,31340,42620,49830,31880,43300,54050],
+[17,15720,26120,34110,20120,30220,41250,48200,30790,41930,49010,31340,42620,53090],
+[16.5,15440,25660,33560,19800,29680,40560,47380,30220,41250,48200,30790,41930,52120],
+[16,15140,25190,33000,19480,29110,39880,46560,29680,40560,47380,30220,41250,51140],
+[15.5,14850,24730,32450,19160,28560,39190,45750,29110,39880,46560,29680,40560,50170],
+[15,14570,24270,31880,18840,28030,38500,44930,28560,39190,45750,29110,39880,49220],
+[14.5,14310,23820,31340,18520,27480,37830,44130,28030,38500,44930,28560,39190,48290],
+[14,14030,23370,30790,18200,26980,37130,43310,27480,37830,44130,28030,38500,47390],
+[13.5,13760,22920,30220,17880,26460,36450,42490,26980,37130,43310,27480,37830,46470],
+[13,13500,22490,29680,17570,25970,35760,41670,26460,36450,42490,26980,37130,45550],
+[12.5,13230,22040,29110,17290,25470,35090,40890,25970,35760,41670,26460,36450,44680],
+[12,12970,21620,28560,16940,24970,34430,40100,25470,35090,40890,25970,35760,43810],
+[11.5,12730,21190,28030,16600,24490,33770,39360,24970,34430,40100,25470,35090,42950],
+[11,12470,20780,27480,16220,24010,33140,38620,24490,33770,39360,24970,34430,42070],
+[10.5,12220,20360,26980,15840,23550,32510,37880,24010,33140,38620,24490,33770,41190],
+[10,11960,19970,26460,15420,23080,31900,37120,23550,32510,37880,24010,33140,40310],
+[9.5,11700,19580,25970,15060,22620,31290,36410,23080,31900,37120,23550,32510,39440],
+[9,11510,19200,25470,14700,22170,30690,35690,22620,31290,36410,23080,31900,38570],
+[8.5,11350,18810,24970,14340,21710,30100,34980,22170,30690,35690,22620,31290,37700],
+[8,11200,18440,24490,13980,21240,29510,34270,21710,30100,34980,22170,30690,36820],
+[7.5,11040,18060,24010,13640,20790,28930,33550,21240,29510,34270,21710,30100,35950],
+[7,10880,17690,23550,13310,20320,28350,32850,20790,28930,33550,21240,29510,35090],
+[6.5,10700,17310,23080,12980,19860,27800,32110,20320,28350,32850,20790,28930,34220],
+[6,10520,16920,22620,12650,19410,27230,31400,19860,27800,32110,20320,28350,33360],
+[5.5,10340,16570,22170,12330,18950,26660,30700,19410,27230,31400,19860,27800,32510],
+[5,10160,16190,21710,12010,18470,26100,29980,18950,26660,30700,19410,27230,31650],
+[4.5,9980,15800,21240,11700,18010,25530,29280,18470,26100,29980,18950,26660,30820],
+[4,9800,15430,20790,11390,17560,24960,28560,18010,25530,29280,18470,26100,29980],
+[3.5,9620,15050,20320,11090,17130,24400,27850,17560,24960,28560,18010,25530,29280],
+[3,9440,14680,19860,10800,16700,23830,27160,17130,24400,27850,17560,24960,28560],
+[2.5,9260,14380,19410,10520,16270,23270,26460,16700,23830,27160,null,null,null],
+[2,9090,14070,18950,10250,15850,22700,25770,16270,23270,26460,16700,23830,27160],
+[1.5,8920,13770,18470,9990,15430,22140,25080,15850,22700,25770,null,null,26460],
+[1,8750,13470,18010,9740,15050,21550,24400,15430,22140,25080,null,null,25770],
+];
+const PNAME={1:'ทั่วไป ปฏิบัติงาน',2:'ทั่วไป ชำนาญงาน',3:'ทั่วไป อาวุโส',4:'วิชาการ ปฏิบัติการ',5:'วิชาการ ชำนาญการ',6:'วิชาการ ชำนาญการพิเศษ',7:'วิชาการ เชี่ยวชาญ',8:'อำนวยการท้องถิ่น ต้น',9:'อำนวยการท้องถิ่น กลาง',10:'อำนวยการท้องถิ่น สูง',11:'บริหารท้องถิ่น ต้น',12:'บริหารท้องถิ่น กลาง',13:'บริหารท้องถิ่น สูง'};
+const ENAME={2:'ดีเด่น',1.5:'ดีมาก',1:'ดี',0.5:'พอใช้',0:'ต้องปรับปรุง'};
+const SEP=new Set([4,8,11]);
+let last=null;
+buildTable(null,null,null);
+
+function buildTable(cs,ns,col){
+  const tb=document.getElementById('tb');tb.innerHTML='';
+  T.forEach(r=>{
+    const step=r[0];
+    const tr=document.createElement('tr');
+    if(cs!==null&&step===cs)tr.classList.add('hc');
+    if(ns!==null&&step===ns)tr.classList.add('hn');
+    const td0=document.createElement('td');
+    td0.textContent=step%1?step.toFixed(1):String(step|0);
+    tr.appendChild(td0);
+    for(let c=1;c<=13;c++){
+      const td=document.createElement('td');
+      if(SEP.has(c))td.classList.add('sep');
+      const v=r[c];
+      if(v==null){td.textContent='—';td.classList.add('e');}
+      else{
+        td.textContent=v.toLocaleString('th-TH');
+        if(cs!==null&&step===cs&&c===col)td.classList.add('hcc');
+        if(ns!==null&&step===ns&&c===col)td.classList.add('hcn');
+      }
+      tr.appendChild(td);
+    }
+    tb.appendChild(tr);
+  });
+}
+
+function calc(){
+  const err=document.getElementById('err');err.style.display='none';
+  const pt=parseInt(document.getElementById('pos').value);
+  const sal=parseFloat(document.getElementById('sal').value);
+  const ev=parseFloat(document.getElementById('ev').value);
+  if(!pt){showErr('กรุณาเลือกประเภทตำแหน่ง');return;}
+  if(!sal||isNaN(sal)){showErr('กรุณากรอกเงินเดือนปัจจุบัน');return;}
+  const col=pt;
+  const ci=T.findIndex(r=>r[col]===sal);
+  if(ci===-1){showErr(`ไม่พบเงินเดือน ${sal.toLocaleString('th-TH')} บาท\nในตาราง บัญชี ๕ สำหรับ "${PNAME[pt]}"\nกรุณาตรวจสอบตัวเลขจากสลิป`);return;}
+  const cs=T[ci][0];
+  const tgt=cs+ev;
+  let ni=T.findIndex(r=>r[0]===tgt&&r[col]!=null);
+  let ceil=false;
+  if(ni===-1){
+    for(let i=ci-1;i>=0;i--){if(T[i][col]!=null){ni=i;break;}}
+    if(ni===-1)ni=ci;
+    ceil=true;
+  }
+  const csalv=T[ci][col],nsalv=T[ni][col],diff=nsalv-csalv,ns=T[ni][0];
+  const fs=s=>s%1?s.toFixed(1):String(s|0);
+  last={pt,sal,cs,ns,csalv,nsalv,diff,ev,ceil,col};
+  document.getElementById('rPos').textContent=PNAME[pt];
+  document.getElementById('rCS').textContent='ขั้น '+fs(cs);
+  document.getElementById('rCSal').textContent=csalv.toLocaleString('th-TH')+' บาท';
+  document.getElementById('rEv').textContent=ENAME[ev]??ev;
+  document.getElementById('rInc').textContent=ev===0?'ไม่เลื่อนขั้น':`+${ev} ขั้น${ceil?' (ชนเพดาน)':''}`;
+  document.getElementById('rNS').textContent='ขั้น '+fs(ns)+(ceil?' (เพดานสูงสุด)':'');
+  document.getElementById('rNSal').textContent=nsalv.toLocaleString('th-TH')+' บาท';
+  document.getElementById('rDiff').textContent='+'+diff.toLocaleString('th-TH');
+  document.getElementById('rNew').textContent=nsalv.toLocaleString('th-TH');
+  document.getElementById('rempty').style.display='none';
+  document.getElementById('rcont').style.display='block';
+  buildTable(cs,ns,col);
+  document.getElementById('tscr').classList.add('open');
+  setTimeout(()=>{const h=document.querySelector('tr.hc');if(h)h.scrollIntoView({behavior:'smooth',block:'center'});},200);
+}
+
+function showErr(m){const e=document.getElementById('err');e.textContent='⚠️ '+m;e.style.display='block';}
+function toggleT(btn){const s=document.getElementById('tscr');s.classList.toggle('open');btn.textContent=s.classList.contains('open')?'📂 ซ่อนตาราง':'📂 แสดง / ซ่อน ตารางบัญชี ๕';}
+function doCopy(){
+  if(!last)return;
+  const r=last,fs=s=>s%1?s.toFixed(1):String(s|0);
+  const txt=`บัญชีอัตราเงินเดือน บัญชี ๕ — ผลการคำนวณ\n${'─'.repeat(44)}\nตำแหน่ง       : ${PNAME[r.pt]}\nเงินเดือนเดิม  : ${r.csalv.toLocaleString('th-TH')} บาท (ขั้น ${fs(r.cs)})\nผลประเมิน     : ${ENAME[r.ev]}${r.ev>0?' (+'+r.ev+' ขั้น)':''} ${r.ceil?'[ชนเพดาน]':''}\nขั้นใหม่       : ขั้น ${fs(r.ns)}\n${'─'.repeat(44)}\nเงินที่ได้เพิ่ม  : +${r.diff.toLocaleString('th-TH')} บาท\nเงินเดือนใหม่  : ${r.nsalv.toLocaleString('th-TH')} บาท\n${'─'.repeat(44)}`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=document.getElementById('cpbtn');b.textContent='✅ คัดลอกแล้ว!';b.classList.add('ok');
+    setTimeout(()=>{b.innerHTML='📋 คัดลอกผลลัพธ์';b.classList.remove('ok');},2500);
+  });
+}
+</script>
+</body>
+</html>
