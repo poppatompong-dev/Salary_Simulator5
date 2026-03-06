@@ -238,16 +238,15 @@ function exportImage() {
 
     // Slight delay to ensure UI redraw is clean
     setTimeout(() => {
-        // html2canvas is loaded globally via CDN in index.html
-        window.html2canvas(targetEl, {
-            scale: 3, // High resolution for beautiful export
-            useCORS: true,
+        // html-to-image is loaded globally via CDN in index.html, beautifully supports oklch
+        window.htmlToImage.toPng(targetEl, {
+            pixelRatio: 3, // High resolution for beautiful export
             backgroundColor: '#ffffff' // Ensure white background for the card
-        }).then(canvas => {
+        }).then(dataUrl => {
             // Create a link and trigger download
             const link = document.createElement('a');
             link.download = `salary-simulation-${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.href = dataUrl;
             link.click();
 
             // Restore button with success state
