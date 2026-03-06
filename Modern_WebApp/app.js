@@ -224,6 +224,59 @@ function copyResult() {
     });
 }
 
+function exportImage() {
+    if (!lastCalculation) return;
+
+    const btn = document.getElementById('exportBtn');
+    const originalHtml = btn.innerHTML;
+
+    // UI Loading state
+    btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-lg"></i> กำลังประมวลผล...';
+    btn.classList.add('opacity-80', 'cursor-wait');
+
+    const targetEl = document.getElementById('resultState');
+
+    // Slight delay to ensure UI redraw is clean
+    setTimeout(() => {
+        // html2canvas is loaded globally via CDN in index.html
+        window.html2canvas(targetEl, {
+            scale: 3, // High resolution for beautiful export
+            useCORS: true,
+            backgroundColor: '#ffffff' // Ensure white background for the card
+        }).then(canvas => {
+            // Create a link and trigger download
+            const link = document.createElement('a');
+            link.download = `salary-simulation-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            // Restore button with success state
+            btn.innerHTML = '<i class="ph-bold ph-check text-lg"></i> บันทึกรูปสำเร็จ!';
+            btn.classList.remove('opacity-80', 'cursor-wait');
+            btn.classList.remove('from-indigo-600', 'to-indigo-700', 'border-indigo-600', 'shadow-indigo-500/20');
+            btn.classList.add('from-emerald-500', 'to-emerald-600', 'border-emerald-500', 'shadow-emerald-500/20');
+
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.remove('from-emerald-500', 'to-emerald-600', 'border-emerald-500', 'shadow-emerald-500/20');
+                btn.classList.add('from-indigo-600', 'to-indigo-700', 'border-indigo-600', 'shadow-indigo-500/20');
+            }, 3000);
+        }).catch(err => {
+            console.error('Export failed:', err);
+            btn.innerHTML = '<i class="ph-bold ph-warning text-lg text-red-100"></i> เกิดข้อผิดพลาด';
+            btn.classList.remove('from-indigo-600', 'to-indigo-700', 'border-indigo-600');
+            btn.classList.add('from-red-500', 'to-red-600', 'border-red-500');
+
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.remove('from-red-500', 'to-red-600', 'border-red-500');
+                btn.classList.add('from-indigo-600', 'to-indigo-700', 'border-indigo-600');
+                btn.classList.remove('opacity-80', 'cursor-wait');
+            }, 3000);
+        });
+    }, 150);
+}
+
 // --- Table Rendering (B5 Pattern) ---
 function renderTable(cs, ns, targetCol, csalv, nsalv) {
     const tbody = document.getElementById('tableBody');
