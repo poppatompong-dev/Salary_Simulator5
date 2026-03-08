@@ -75,61 +75,164 @@ function buildExportText(res) {
 
 function buildExportHTML(res) {
     const payload = buildExportPayload(res);
-    const ceilingText = payload.reachedCeiling
-        ? `ถึงเพดานสูงสุดของตำแหน่งนี้แล้ว (${payload.maxSalary} บาท)`
-        : `ยังขยับได้อีก ${payload.stepsLeft} ขั้น และหากรักษาระดับดีเด่น จะใช้ประมาณ ${payload.roundsToTop} รอบ`;
+    const ceilingNote = payload.reachedCeiling
+        ? `เงินเดือนถึงเพดานสูงสุดของระดับตำแหน่งแล้ว (${payload.maxSalary} บาท)`
+        : `ยังสามารถเลื่อนขั้นได้อีก ${payload.stepsLeft} ขั้น คิดเป็นประมาณ ${payload.roundsToTop} รอบการประเมิน (กรณีได้รับการประเมินระดับ "ดีเด่น" ต่อเนื่อง)`;
 
     return `<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ผลการคำนวณเลื่อนขั้นเงินเดือน</title>
+<title>บันทึกผลการคำนวณการเลื่อนขั้นเงินเดือน</title>
 <style>
-body{margin:0;padding:24px;background:#eef2ff;font-family:Inter,Sarabun,system-ui,sans-serif;color:#0f172a}
-.sheet{max-width:900px;margin:0 auto;background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%);border:1px solid #dbeafe;border-radius:28px;overflow:hidden;box-shadow:0 24px 80px rgba(15,23,42,.12)}
-.hero{padding:32px;background:linear-gradient(135deg,#312e81 0%,#4338ca 55%,#0f766e 100%);color:#fff}
-.kicker{display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.14);font-size:13px;font-weight:700;letter-spacing:.04em}
-.title{margin:18px 0 8px;font-size:34px;font-weight:800;line-height:1.15}
-.subtitle{margin:0;font-size:16px;opacity:.92}
-.content{padding:28px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}
-.card{background:#fff;border:1px solid #e2e8f0;border-radius:22px;padding:20px;box-shadow:0 8px 30px rgba(15,23,42,.05)}
-.label{font-size:13px;color:#64748b;font-weight:700;margin-bottom:8px}
-.value{font-size:24px;font-weight:800;color:#0f172a}
-.muted{font-size:14px;color:#475569}
-.band{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
-.metric{border-radius:22px;padding:18px 20px;color:#fff}
-.metric.amber{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%)}
-.metric.green{background:linear-gradient(135deg,#10b981 0%,#047857 100%)}
-.metric.slate{background:linear-gradient(135deg,#334155 0%,#0f172a 100%)}
-.metric .big{display:block;font-size:28px;font-weight:800;margin-top:8px}
-.footer{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:18px;padding-top:18px;border-top:1px solid #e2e8f0;color:#475569;font-size:14px}
-@media (max-width:720px){.grid,.band{grid-template-columns:1fr}.title{font-size:28px}.footer{flex-direction:column;align-items:flex-start}}
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#f0f4f8;font-family:'Sarabun',sans-serif;color:#1e293b;font-size:14px;line-height:1.7;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{max-width:800px;margin:24px auto;background:#fff;box-shadow:0 2px 24px rgba(0,0,0,.1)}
+  /* Header band */
+  .doc-header{background:#1e3a5f;color:#fff;padding:20px 32px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+  .doc-header .org{font-size:11px;opacity:.75;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+  .doc-header .title{font-size:20px;font-weight:700;line-height:1.3}
+  .doc-header .subtitle{font-size:12px;opacity:.8;margin-top:4px}
+  .doc-header .doc-no{text-align:right;font-size:11px;opacity:.75;white-space:nowrap}
+  .doc-header .doc-no strong{display:block;font-size:13px;opacity:1;margin-top:2px}
+  /* Blue accent line */
+  .accent-bar{height:4px;background:linear-gradient(90deg,#3b82f6 0%,#06b6d4 50%,#10b981 100%)}
+  /* Body */
+  .doc-body{padding:28px 32px}
+  /* Section title */
+  .section-title{font-size:11px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin-bottom:14px;margin-top:22px}
+  .section-title:first-child{margin-top:0}
+  /* Info grid */
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;margin-bottom:8px}
+  .info-row{display:contents}
+  .info-label{background:#f8fafc;color:#475569;font-size:12px;font-weight:600;padding:9px 14px;border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0}
+  .info-value{background:#fff;color:#0f172a;font-size:13px;font-weight:700;padding:9px 14px;border-bottom:1px solid #e2e8f0}
+  .info-label:last-of-type,.info-value:last-of-type{border-bottom:none}
+  /* Result highlight */
+  .result-panel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0}
+  .result-card{border-radius:8px;padding:14px 16px;border:1px solid}
+  .result-card.amber{background:#fffbeb;border-color:#fcd34d}
+  .result-card.green{background:#f0fdf4;border-color:#86efac}
+  .result-card.blue{background:#eff6ff;border-color:#bfdbfe}
+  .result-card .rc-label{font-size:11px;font-weight:600;color:#64748b;margin-bottom:4px}
+  .result-card.amber .rc-value{color:#b45309;font-size:22px;font-weight:800}
+  .result-card.green .rc-value{color:#15803d;font-size:22px;font-weight:800}
+  .result-card.blue .rc-value{color:#1d4ed8;font-size:22px;font-weight:800}
+  .result-card .rc-sub{font-size:11px;color:#64748b;margin-top:2px}
+  /* Change arrow row */
+  .change-row{display:flex;align-items:center;gap:0;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin:16px 0}
+  .change-box{flex:1;padding:14px 18px;text-align:center}
+  .change-box.before{background:#fffbeb}
+  .change-box.after{background:#f0fdf4}
+  .change-box .cb-label{font-size:11px;font-weight:600;color:#64748b;margin-bottom:2px}
+  .change-box .cb-step{font-size:20px;font-weight:800}
+  .change-box.before .cb-step{color:#b45309}
+  .change-box.after .cb-step{color:#15803d}
+  .change-box .cb-sal{font-size:13px;font-weight:600;margin-top:2px}
+  .change-box.before .cb-sal{color:#92400e}
+  .change-box.after .cb-sal{color:#166534}
+  .change-arrow{background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 16px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0}
+  .change-arrow .arrow-sym{font-size:20px;color:#6366f1;font-weight:900;line-height:1}
+  .change-arrow .arrow-inc{font-size:11px;font-weight:700;color:#6366f1;margin-top:4px;white-space:nowrap}
+  /* Remark box */
+  .remark-box{border-left:4px solid #6366f1;background:#f8f7ff;padding:12px 16px;border-radius:0 6px 6px 0;font-size:13px;color:#1e293b;line-height:1.8}
+  /* Signature area */
+  .sig-area{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:32px;padding-top:20px;border-top:1px dashed #cbd5e1}
+  .sig-block{text-align:center}
+  .sig-line{border-bottom:1px solid #94a3b8;margin:32px 20px 6px}
+  .sig-label{font-size:12px;color:#475569}
+  /* Footer */
+  .doc-footer{background:#f8fafc;border-top:1px solid #e2e8f0;padding:12px 32px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#94a3b8}
+  .doc-footer strong{color:#64748b}
+  @media print{body{background:#fff}.page{box-shadow:none;margin:0}}
 </style>
 </head>
 <body>
-<div class="sheet">
-<div class="hero">
-<div class="kicker">Salary Simulator Report</div>
-<div class="title">ผลการคำนวณเลื่อนขั้นเงินเดือน</div>
-<p class="subtitle">สรุปผลแบบอ่านง่าย พร้อมใช้งานต่อสำหรับบันทึก ส่งต่อ หรือจัดเก็บเป็นหลักฐาน</p>
-</div>
-<div class="content">
-<div class="grid">
-<div class="card"><div class="label">ตำแหน่ง</div><div class="value">${payload.position}</div><div class="muted">ผลประเมิน: ${payload.evaluation}</div></div>
-<div class="card"><div class="label">ผลการเลื่อน</div><div class="value">${payload.increaseText}</div><div class="muted">จัดทำเมื่อ ${payload.generatedAt}</div></div>
-<div class="card"><div class="label">ขั้นเดิม</div><div class="value">${payload.currentStep}</div><div class="muted">เงินเดือนเดิม ${payload.currentSalary} บาท</div></div>
-<div class="card"><div class="label">ขั้นใหม่</div><div class="value">${payload.newStep}</div><div class="muted">เงินเดือนใหม่ ${payload.newSalary} บาท</div></div>
-</div>
-<div class="band">
-<div class="metric amber">ส่วนต่างเงินเดือน<span class="big">+${payload.diff} บาท</span></div>
-<div class="metric green">อัตราการเติบโต<span class="big">${payload.growthRate}%</span></div>
-<div class="metric slate">เพดานสูงสุด<span class="big">${payload.maxSalary} บาท</span></div>
-</div>
-<div class="card"><div class="label">สรุปเชิงวิเคราะห์</div><div class="muted" style="font-size:15px;line-height:1.8;color:#1e293b">${ceilingText}</div></div>
-<div class="footer"><div>อ้างอิงการคำนวณจากบัญชี ๕ และตรรกะในระบบ</div><div>พัฒนาโดย นักวิชาการคอมพิวเตอร์ เทศบาลเมืองอุทัยธานี</div></div>
-</div>
+<div class="page">
+  <div class="doc-header">
+    <div>
+      <div class="org">เทศบาลเมืองอุทัยธานี &bull; ระบบบริหารงานบุคคล</div>
+      <div class="title">บันทึกผลการคำนวณการเลื่อนขั้นเงินเดือน</div>
+      <div class="subtitle">อ้างอิงบัญชีอัตราเงินเดือนและค่าจ้าง หมวด ๕ (บัญชี ๕) พนักงานส่วนท้องถิ่น</div>
+    </div>
+    <div class="doc-no">
+      วันที่จัดทำ<strong>${payload.generatedAt}</strong>
+    </div>
+  </div>
+  <div class="accent-bar"></div>
+  <div class="doc-body">
+
+    <div class="section-title">ข้อมูลผู้รับการประเมิน</div>
+    <div class="info-grid">
+      <div class="info-label">ประเภทและระดับตำแหน่ง</div>
+      <div class="info-value">${payload.position}</div>
+      <div class="info-label">ผลการประเมินประสิทธิภาพ</div>
+      <div class="info-value">${payload.evaluation}</div>
+    </div>
+
+    <div class="section-title">ผลการเลื่อนขั้นเงินเดือน</div>
+    <div class="change-row">
+      <div class="change-box before">
+        <div class="cb-label">ขั้นเงินเดือนเดิม</div>
+        <div class="cb-step">ขั้น ${payload.currentStep}</div>
+        <div class="cb-sal">${payload.currentSalary} บาท</div>
+      </div>
+      <div class="change-arrow">
+        <div class="arrow-sym">&#8594;</div>
+        <div class="arrow-inc">${payload.increaseText}</div>
+      </div>
+      <div class="change-box after">
+        <div class="cb-label">ขั้นเงินเดือนใหม่</div>
+        <div class="cb-step">ขั้น ${payload.newStep}</div>
+        <div class="cb-sal">${payload.newSalary} บาท</div>
+      </div>
+    </div>
+
+    <div class="result-panel">
+      <div class="result-card amber">
+        <div class="rc-label">ส่วนต่างที่ได้รับเพิ่ม</div>
+        <div class="rc-value">+${payload.diff}</div>
+        <div class="rc-sub">บาท/เดือน</div>
+      </div>
+      <div class="result-card green">
+        <div class="rc-label">อัตราการเติบโต</div>
+        <div class="rc-value">${payload.growthRate}%</div>
+        <div class="rc-sub">จากฐานเดิม</div>
+      </div>
+      <div class="result-card blue">
+        <div class="rc-label">เพดานสูงสุดของระดับ</div>
+        <div class="rc-value">${payload.maxSalary}</div>
+        <div class="rc-sub">บาท (ขั้น ${payload.maxStep})</div>
+      </div>
+    </div>
+
+    <div class="section-title">บันทึกและข้อสังเกต</div>
+    <div class="remark-box">${ceilingNote}</div>
+
+    <div class="sig-area">
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-label">ลงชื่อ ....................................... ผู้จัดทำ</div>
+        <div class="sig-label">(................................................)</div>
+        <div class="sig-label">ตำแหน่ง .....................................</div>
+        <div class="sig-label">วันที่ ............/............/............</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-label">ลงชื่อ ....................................... ผู้ตรวจสอบ</div>
+        <div class="sig-label">(................................................)</div>
+        <div class="sig-label">ตำแหน่ง .....................................</div>
+        <div class="sig-label">วันที่ ............/............/............</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="doc-footer">
+    <span>จัดทำโดยระบบจำลองเลื่อนขั้นเงินเดือน &bull; อ้างอิงข้อมูลจากบัญชี ๕ พนักงานส่วนท้องถิ่น</span>
+    <strong>เทศบาลเมืองอุทัยธานี</strong>
+  </div>
 </div>
 </body>
 </html>`;
@@ -362,10 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderTable(null, null, null);
 
-    if (toggleTableBtn) {
-        toggleTableBtn.addEventListener('click', toggleTableCollapse);
-    }
-    
     // Expose export functions to window to ensure HTML onclick can reach them
     window.copyResult = copyResult;
     window.exportImage = exportImage;
