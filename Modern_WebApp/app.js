@@ -73,6 +73,78 @@ function buildExportText(res) {
 (พัฒนาโดย: นักวิชาการคอมพิวเตอร์ เทศบาลเมืองอุทัยธานี)`
 }
 
+function escapeXml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
+function buildExportSvg(res) {
+    const payload = buildExportPayload(res);
+    const ceilingText = payload.reachedCeiling
+        ? `ตำแหน่งนี้ถึงเพดานสูงสุดแล้วที่ ${payload.maxSalary} บาท`
+        : `ยังเลื่อนได้อีก ${payload.stepsLeft} ขั้น และหากได้ดีเด่นต่อเนื่องจะใช้ประมาณ ${payload.roundsToTop} รอบ`;
+
+    return `
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="920" viewBox="0 0 1200 920">
+  <rect width="1200" height="920" fill="#eef2ff"/>
+  <rect x="32" y="32" width="1136" height="856" rx="28" fill="#ffffff" stroke="#dbeafe" stroke-width="2"/>
+
+  <rect x="32" y="32" width="1136" height="170" rx="28" fill="#312e81"/>
+  <rect x="32" y="150" width="1136" height="52" fill="#312e81"/>
+  <text x="78" y="88" fill="#ffffff" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">Salary Simulator Report</text>
+  <text x="78" y="130" fill="#ffffff" font-size="40" font-weight="800" font-family="Sarabun, Arial, sans-serif">ผลการคำนวณเลื่อนขั้นเงินเดือน</text>
+  <text x="78" y="164" fill="#dbeafe" font-size="20" font-weight="400" font-family="Sarabun, Arial, sans-serif">สรุปผลแบบพร้อมใช้งานสำหรับบันทึก แชร์ และจัดเก็บ</text>
+
+  <rect x="78" y="238" width="500" height="132" rx="20" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="622" y="238" width="500" height="132" rx="20" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="78" y="392" width="500" height="132" rx="20" fill="#fff7ed" stroke="#fed7aa"/>
+  <rect x="622" y="392" width="500" height="132" rx="20" fill="#ecfdf5" stroke="#a7f3d0"/>
+
+  <text x="108" y="276" fill="#64748b" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">ตำแหน่ง</text>
+  <text x="108" y="322" fill="#0f172a" font-size="31" font-weight="800" font-family="Sarabun, Arial, sans-serif">${escapeXml(payload.position)}</text>
+  <text x="108" y="350" fill="#475569" font-size="20" font-weight="400" font-family="Sarabun, Arial, sans-serif">ผลประเมิน: ${escapeXml(payload.evaluation)}</text>
+
+  <text x="652" y="276" fill="#64748b" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">ผลการเลื่อน</text>
+  <text x="652" y="322" fill="#312e81" font-size="31" font-weight="800" font-family="Sarabun, Arial, sans-serif">${escapeXml(payload.increaseText)}</text>
+  <text x="652" y="350" fill="#475569" font-size="20" font-weight="400" font-family="Sarabun, Arial, sans-serif">จัดทำเมื่อ ${escapeXml(payload.generatedAt)}</text>
+
+  <text x="108" y="430" fill="#9a3412" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">ข้อมูลเดิม</text>
+  <text x="108" y="470" fill="#7c2d12" font-size="28" font-weight="800" font-family="Sarabun, Arial, sans-serif">ขั้น ${escapeXml(payload.currentStep)}</text>
+  <text x="108" y="504" fill="#9a3412" font-size="24" font-weight="600" font-family="Sarabun, Arial, sans-serif">${escapeXml(payload.currentSalary)} บาท</text>
+
+  <text x="652" y="430" fill="#065f46" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">ข้อมูลใหม่</text>
+  <text x="652" y="470" fill="#065f46" font-size="28" font-weight="800" font-family="Sarabun, Arial, sans-serif">ขั้น ${escapeXml(payload.newStep)}</text>
+  <text x="652" y="504" fill="#047857" font-size="24" font-weight="600" font-family="Sarabun, Arial, sans-serif">${escapeXml(payload.newSalary)} บาท</text>
+
+  <rect x="78" y="552" width="320" height="118" rx="22" fill="#f59e0b"/>
+  <rect x="440" y="552" width="320" height="118" rx="22" fill="#10b981"/>
+  <rect x="802" y="552" width="320" height="118" rx="22" fill="#334155"/>
+
+  <text x="108" y="590" fill="#ffffff" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">ส่วนต่างเงินเดือน</text>
+  <text x="108" y="636" fill="#ffffff" font-size="36" font-weight="800" font-family="Sarabun, Arial, sans-serif">+${escapeXml(payload.diff)}</text>
+
+  <text x="470" y="590" fill="#ffffff" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">อัตราการเติบโต</text>
+  <text x="470" y="636" fill="#ffffff" font-size="36" font-weight="800" font-family="Sarabun, Arial, sans-serif">${escapeXml(payload.growthRate)}%</text>
+
+  <text x="832" y="590" fill="#ffffff" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">เพดานสูงสุด</text>
+  <text x="832" y="636" fill="#ffffff" font-size="36" font-weight="800" font-family="Sarabun, Arial, sans-serif">${escapeXml(payload.maxSalary)}</text>
+
+  <rect x="78" y="702" width="1044" height="108" rx="22" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="108" y="738" fill="#64748b" font-size="18" font-weight="700" font-family="Sarabun, Arial, sans-serif">สรุปเชิงวิเคราะห์</text>
+  <text x="108" y="778" fill="#1e293b" font-size="22" font-weight="400" font-family="Sarabun, Arial, sans-serif">${escapeXml(ceilingText)}</text>
+
+  <line x1="78" y1="840" x2="1122" y2="840" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="78" y="872" fill="#475569" font-size="18" font-weight="400" font-family="Sarabun, Arial, sans-serif">อ้างอิงการคำนวณจากบัญชี ๕ และตรรกะในระบบ</text>
+  <text x="744" y="872" fill="#475569" font-size="18" font-weight="400" font-family="Sarabun, Arial, sans-serif">พัฒนาโดย นักวิชาการคอมพิวเตอร์ เทศบาลเมืองอุทัยธานี</text>
+</svg>
+`;
+
+}
+
 function buildExportHTML(res) {
     const payload = buildExportPayload(res);
     const ceilingNote = payload.reachedCeiling
@@ -357,34 +429,45 @@ async function exportCardAsImage(format) {
     if (!lastCalculation) return;
 
     const btn = document.getElementById(format === 'jpeg' ? 'exportJpgBtn' : 'exportPngBtn');
-    const method = format === 'jpeg' ? 'toJpeg' : 'toPng';
     const fileExt = format === 'jpeg' ? 'jpg' : 'png';
     const loadingLabel = format === 'jpeg' ? 'กำลังสร้าง JPG...' : 'กำลังสร้าง PNG...';
 
     setButtonLoading(btn, `<i class="ph-bold ph-spinner animate-spin text-lg"></i> ${loadingLabel}`);
 
-    const exportNode = createExportNode(lastCalculation);
-    document.body.appendChild(exportNode);
-
-    // Give browser a moment to layout the node before generating image
-    await new Promise(resolve => setTimeout(resolve, 150));
-
     try {
-        const dataUrl = await window.htmlToImage[method](exportNode, {
-            pixelRatio: 2.5,
-            backgroundColor: '#eef2ff',
-            quality: format === 'jpeg' ? 0.96 : undefined
+        const svgMarkup = buildExportSvg(lastCalculation);
+        const svgBlob = new Blob([svgMarkup], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const image = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = svgUrl;
         });
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        canvas.height = 920;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#eef2ff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0);
+
+        URL.revokeObjectURL(svgUrl);
+
+        const dataUrl = format === 'jpeg'
+            ? canvas.toDataURL('image/jpeg', 0.96)
+            : canvas.toDataURL('image/png');
+
         const link = document.createElement('a');
         link.download = `salary-simulation-${Date.now()}.${fileExt}`;
         link.href = dataUrl;
         link.click();
-        flashButtonState(btn, `<i class="ph-bold ph-check text-lg"></i> ${fileExt.toUpperCase()} พร้อมแล้ว`, ['from-emerald-500', 'to-emerald-600', 'border-emerald-500'], ['from-indigo-600', 'to-indigo-700', 'border-indigo-600']);
+        flashButtonState(btn, `<i class="ph-bold ph-check text-lg"></i> ${fileExt.toUpperCase()} พร้อมแล้ว`, ['border-emerald-500', 'text-emerald-700', 'bg-emerald-50'], ['border-gray-300', 'text-gray-900', 'bg-white']);
     } catch (err) {
         console.error(`Export ${format} failed:`, err);
-        flashButtonState(btn, '<i class="ph-bold ph-warning text-lg"></i> ส่งออกไม่สำเร็จ', ['from-red-500', 'to-red-600', 'border-red-500'], ['from-indigo-600', 'to-indigo-700', 'border-indigo-600']);
-    } finally {
-        exportNode.remove();
+        flashButtonState(btn, '<i class="ph-bold ph-warning text-lg"></i> ส่งออกไม่สำเร็จ', ['border-red-500', 'text-red-700', 'bg-red-50'], ['border-gray-300', 'text-gray-900', 'bg-white']);
     }
 }
 
