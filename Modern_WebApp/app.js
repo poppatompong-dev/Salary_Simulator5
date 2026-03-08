@@ -246,13 +246,14 @@ function createExportNode(res) {
     const wrapper = document.createElement('div');
 
     wrapper.style.position = 'fixed';
-    wrapper.style.left = '-10000px';
+    wrapper.style.left = '-9999px';
     wrapper.style.top = '0';
     wrapper.style.width = '1200px';
     wrapper.style.padding = '32px';
     wrapper.style.background = '#eef2ff';
     wrapper.style.fontFamily = 'Inter, Sarabun, system-ui, sans-serif';
     wrapper.style.color = '#0f172a';
+    wrapper.style.zIndex = '999999';
     wrapper.innerHTML = `
         <div style="background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%); border:1px solid #dbeafe; border-radius:30px; overflow:hidden; box-shadow:0 24px 80px rgba(15,23,42,.12);">
             <div style="padding:34px; background:linear-gradient(135deg,#312e81 0%,#4338ca 50%,#0f766e 100%); color:#ffffff;">
@@ -364,6 +365,9 @@ async function exportCardAsImage(format) {
 
     const exportNode = createExportNode(lastCalculation);
     document.body.appendChild(exportNode);
+
+    // Give browser a moment to layout the node before generating image
+    await new Promise(resolve => setTimeout(resolve, 150));
 
     try {
         const dataUrl = await window.htmlToImage[method](exportNode, {
